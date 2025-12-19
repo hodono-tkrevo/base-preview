@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>4 Cards Slideshow (CSS only)</title>
+    <style>
+      :root {
+        --gap: 16px;
+        --duration: 14s; /* 1カード内の1周の時間 */
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP",
+          sans-serif;
+        background: #f6f7f8;
+        padding: 24px;
+      }
+
+      /* レイアウト：横1列なら repeat(4,1fr) / 2×2なら repeat(2,1fr) に */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(
+          2,
+          1fr
+        ); /* ←2×2にしたいなら repeat(2, 1fr) */
+        gap: var(--gap);
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: #070034;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+        z-index: 1;
+      }
+
+      .media {
+        position: relative;
+        aspect-ratio: 4 / 5; /* カードの写真比率 */
+        background: #ddd;
+      }
+
+      /* スライド：同じ場所に4枚重ねて opacity を切り替える */
+      .slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        animation: fade var(--duration) infinite;
+        transform: scale(1.02);
+      }
+
+      .slide:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .slide:nth-child(2) {
+        animation-delay: calc(var(--duration) * 0.25);
+      }
+      .slide:nth-child(3) {
+        animation-delay: calc(var(--duration) * 0.5);
+      }
+      .slide:nth-child(4) {
+        animation-delay: calc(var(--duration) * 0.75);
+      }
+
+      /* フェード切り替え（4枚想定） */
+      @keyframes fade {
+        0% {
+          opacity: 0;
+        }
+        6% {
+          opacity: 1;
+        }
+        25% {
+          opacity: 1;
+        }
+        31% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .caption {
+        padding: 12px 14px 14px;
+      }
+      .title {
+        font-weight: 700;
+        font-size: 14px;
+        margin: 0 0 6px;
+      }
+      .meta {
+        font-size: 15px;
+        text-align: center;
+        color: #fff;
+        margin: 0;
+      }
+
+      /* 省エネ＆アクセシビリティ：動きを止める設定 */
+      @media (prefers-reduced-motion: reduce) {
+        .slide {
+          animation: none;
+          opacity: 1;
+        }
+        .slide:not(:first-child) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="media">
+          <div class="slide" style="background-image: url('img/1.jpg')"></div>
+          <div class="slide" style="background-image: url('img/2.jpg')"></div>
+          <div class="slide" style="background-image: url('img/3.jpg')"></div>
+          <div class="slide" style="background-image: url('img/4.jpg')"></div>
+        </div>
+        <div class="caption">
+          <p class="meta">〒770-0000<br />徳島県徳島市○○○○○○○</p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="media">
+          <div class="slide" style="background-image: url('img/4.jpg')"></div>
+          <div class="slide" style="background-image: url('img/5.jpg')"></div>
+          <div class="slide" style="background-image: url('img/6.jpg')"></div>
+          <div class="slide" style="background-image: url('img/1.jpg')"></div>
+        </div>
+        <div class="caption">
+          <p class="meta">〒770-0000<br />香川県○○○○○○○</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
