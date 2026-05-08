@@ -1,146 +1,453 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>4 Cards Slideshow (CSS only)</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BASE Group Opening Animation</title>
+
     <style>
       :root {
-        --gap: 16px;
-        --duration: 14s; /* 1カード内の1周の時間 */
+        --bg: #05070d;
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --accent: #fbe200;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
       body {
-        margin: 0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP",
-          sans-serif;
-        background: #f6f7f8;
-        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Noto Sans JP", system-ui, sans-serif;
+        overflow: hidden;
       }
 
-      /* レイアウト：横1列なら repeat(4,1fr) / 2×2なら repeat(2,1fr) に */
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(
-          2,
-          1fr
-        ); /* ←2×2にしたいなら repeat(2, 1fr) */
-        gap: var(--gap);
-        max-width: 1120px;
+      /*
+      ========================================
+      OPENING
+      ========================================
+      */
+
+      .opening {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+
+        background: #121f47;
+
+        animation: openingOut 1.2s ease forwards;
+        animation-delay: 6.5s;
+      }
+
+      /*
+      背景ノイズ
+      */
+
+      .opening::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+
+        background-size: 3px 3px;
+
+        opacity: 0.35;
+        mix-blend-mode: overlay;
+      }
+
+      .opening-inner {
+        position: relative;
+        z-index: 2;
+
+        width: min(90vw, 900px);
+
+        text-align: center;
+      }
+
+      /*
+      ========================================
+      OPENING TEXT
+      ========================================
+      */
+
+      .opening-title {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .opening-title span {
+        display: block;
+
+        font-size: clamp(22px, 4vw, 54px);
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: 0.08em;
+
+        opacity: 0;
+        filter: blur(12px);
+        transform: translateY(80px);
+
+        animation: revealText 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      }
+
+      /*
+      1行ずつ表示
+      */
+
+      .opening-title span:nth-child(1) {
+        animation-delay: 0.4s;
+      }
+
+      .opening-title span:nth-child(2) {
+        animation-delay: 1.1s;
+      }
+
+      .opening-title span:nth-child(3) {
+        animation-delay: 1.8s;
+      }
+
+      .opening-title span:nth-child(4) {
+        animation-delay: 2.5s;
+      }
+
+      /*
+      メインコピー
+      */
+
+      .opening-title .main-copy {
+        margin-top: 18px;
+
+        font-size: clamp(28px, 5vw, 72px);
+
+        color: var(--accent);
+
+        letter-spacing: 0.04em;
+
+        text-shadow:
+          0 0 18px rgba(251, 226, 0, 0.12),
+          0 0 40px rgba(251, 226, 0, 0.08);
+
+        animation-delay: 3.5s;
+      }
+
+      /*
+      サブコピー
+      */
+
+      .sub-copy {
+        margin-top: 30px;
+
+        font-size: clamp(12px, 1.2vw, 16px);
+        line-height: 2;
+        letter-spacing: 0.12em;
+
+        color: rgba(255, 255, 255, 0.72);
+
+        opacity: 0;
+        filter: blur(8px);
+        transform: translateY(20px);
+
+        animation: revealText 1.2s ease forwards;
+        animation-delay: 4.6s;
+      }
+
+      /*
+      ライン
+      */
+
+      .opening-line {
+        width: 0;
+        height: 1px;
+
+        margin: 34px auto 0;
+
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+
+        animation: lineGrow 1s ease forwards;
+        animation-delay: 5.3s;
+      }
+
+      /*
+      ========================================
+      HERO
+      ========================================
+      */
+
+      .hero {
+        position: relative;
+
+        min-height: 100vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        padding: 8vw;
+
+        overflow: hidden;
+
+        opacity: 0;
+        transform: scale(1.08);
+
+        animation: heroIn 2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+
+        animation-delay: 6.4s;
+      }
+
+      /*
+      背景画像
+      */
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(0, 70, 180, 0.72),
+            rgba(0, 25, 80, 0.82)
+          ),
+          url("./img/kv2.jpg") center/cover;
+
+        background-blend-mode: overlay;
+        transform: scale(1.08);
+        animation: slowZoom 9s ease forwards;
+      }
+      /*
+      下グラデ
+      */
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+
+        background: linear-gradient(
+          180deg,
+          transparent 60%,
+          rgba(5, 7, 13, 0.72)
+        );
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+
+        max-width: 900px;
+
+        text-align: center;
+
         margin: 0 auto;
       }
 
-      .card {
-        background: #070034;
-        border-radius: var(--radius);
-        overflow: hidden;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-        z-index: 1;
-      }
+      /*
+      HERO SUBTITLE
+      */
 
-      .media {
-        position: relative;
-        aspect-ratio: 4 / 5; /* カードの写真比率 */
-        background: #ddd;
-      }
+      .hero-subtitle {
+        color: var(--accent);
 
-      /* スライド：同じ場所に4枚重ねて opacity を切り替える */
-      .slide {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
+        font-size: 12px;
+        letter-spacing: 0.28em;
+
+        margin-bottom: 24px;
+
         opacity: 0;
-        animation: fade var(--duration) infinite;
-        transform: scale(1.02);
+        transform: translateY(20px);
+
+        animation: fadeUp 1s ease forwards;
+        animation-delay: 7.1s;
       }
 
-      .slide:nth-child(1) {
-        animation-delay: 0s;
-      }
-      .slide:nth-child(2) {
-        animation-delay: calc(var(--duration) * 0.25);
-      }
-      .slide:nth-child(3) {
-        animation-delay: calc(var(--duration) * 0.5);
-      }
-      .slide:nth-child(4) {
-        animation-delay: calc(var(--duration) * 0.75);
-      }
+      /*
+      HERO TITLE
+      */
 
-      /* フェード切り替え（4枚想定） */
-      @keyframes fade {
-        0% {
-          opacity: 0;
-        }
-        6% {
-          opacity: 1;
-        }
-        25% {
-          opacity: 1;
-        }
-        31% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-
-      .caption {
-        padding: 12px 14px 14px;
-      }
-      .title {
+      .hero-title {
+        font-size: clamp(20px, 3vw, 48px);
+        line-height: 2;
         font-weight: 700;
-        font-size: 14px;
-        margin: 0 0 6px;
-      }
-      .meta {
-        font-size: 15px;
-        text-align: center;
-        color: #fff;
-        margin: 0;
+        letter-spacing: 0.04em;
+
+        opacity: 0;
+        transform: translateY(30px);
+
+        animation: fadeUp 1.2s ease forwards;
+        animation-delay: 7.4s;
       }
 
-      /* 省エネ＆アクセシビリティ：動きを止める設定 */
-      @media (prefers-reduced-motion: reduce) {
-        .slide {
-          animation: none;
+      /*
+      HERO TEXT
+      */
+
+      .hero-text {
+        margin: 30px auto 0;
+
+        max-width: 540px;
+
+        color: rgba(255, 255, 255, 0.78);
+
+        font-size: 14px;
+        line-height: 2.1;
+        letter-spacing: 0.08em;
+
+        opacity: 0;
+        transform: translateY(20px);
+
+        animation: fadeUp 1s ease forwards;
+        animation-delay: 7.8s;
+      }
+
+      /*
+      ========================================
+      ANIMATION
+      ========================================
+      */
+
+      @keyframes revealText {
+        to {
           opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
         }
-        .slide:not(:first-child) {
-          display: none;
+      }
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes lineGrow {
+        to {
+          width: 180px;
+        }
+      }
+
+      @keyframes openingOut {
+        to {
+          opacity: 0;
+          visibility: hidden;
+          transform: scale(1.04);
+        }
+      }
+
+      @keyframes heroIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes slowZoom {
+        to {
+          transform: scale(1);
+        }
+      }
+
+      /*
+      ========================================
+      RESPONSIVE
+      ========================================
+      */
+
+      @media (max-width: 768px) {
+        .opening-title {
+          gap: 4px;
+        }
+
+        .hero {
+          padding: 10vw 7vw;
+        }
+
+        .hero-title {
+          line-height: 1.35;
+        }
+
+        .hero-text {
+          font-size: 13px;
+          line-height: 2;
+        }
+
+        .sub-copy {
+          letter-spacing: 0.08em;
+          line-height: 1.8;
         }
       }
     </style>
   </head>
-  <body>
-    <div class="grid">
-      <!-- Card 1 -->
-      <div class="card">
-        <div class="media">
-          <div class="slide" style="background-image: url('img/1.jpg')"></div>
-          <div class="slide" style="background-image: url('img/2.jpg')"></div>
-          <div class="slide" style="background-image: url('img/3.jpg')"></div>
-          <div class="slide" style="background-image: url('img/4.jpg')"></div>
-        </div>
-        <div class="caption">
-          <p class="meta">〒770-0000<br />徳島県徳島市○○○○○○○</p>
-        </div>
-      </div>
 
-      <!-- Card 2 -->
-      <div class="card">
-        <div class="media">
-          <div class="slide" style="background-image: url('img/4.jpg')"></div>
-          <div class="slide" style="background-image: url('img/5.jpg')"></div>
-          <div class="slide" style="background-image: url('img/6.jpg')"></div>
-          <div class="slide" style="background-image: url('img/1.jpg')"></div>
-        </div>
-        <div class="caption">
-          <p class="meta">〒770-0000<br />香川県○○○○○○○</p>
-        </div>
+  <body>
+    <!-- OPENING -->
+
+    <section class="opening">
+      <div class="opening-inner">
+        <h1 class="opening-title">
+          <span>家づくり？</span>
+
+          <span>不動産？</span>
+
+          <span>インテリア？</span>
+
+          <span>キャリア？</span>
+
+          <span class="main-copy"> 全部、BASE Groupで。 </span>
+        </h1>
+
+        <p class="sub-copy">
+          建物 × 不動産 × インテリア × 人材<br />
+          人生の節目をプロデュースする。
+        </p>
+
+        <div class="opening-line"></div>
       </div>
-    </div>
+    </section>
+
+    <!-- HERO -->
+
+    <main class="hero">
+      <div class="hero-bg"></div>
+
+      <div class="hero-content">
+        <!-- <p class="hero-subtitle">TOKUSHIMA REAL ESTATE</p> -->
+
+        <h2 class="hero-title">
+          世界一、人が輝いている<br />
+          住まいと暮らしの<br />
+          総合コンサルティングカンパニー
+        </h2>
+
+        <!-- <p class="hero-text">
+          地域に寄り添い、理想の暮らしをかたちにする。<br />
+          不動産の価値を、もっとわかりやすく、美しく。
+        </p> -->
+      </div>
+    </main>
   </body>
 </html>
